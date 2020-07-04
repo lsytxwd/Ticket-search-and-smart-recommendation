@@ -4,3 +4,6 @@ spring:
     url: jdbc:mysql://192.168.101.100:3306/shopping?useSSL=false
     username: hive
     password: admin
+
+#swagger开关
+switch-swagger-up: true
