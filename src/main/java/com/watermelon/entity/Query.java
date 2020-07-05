@@ -17,6 +17,7 @@ public class Query {
 
     /**
      * peopleNumber 人数
+     * transitTime 中转次数
      * startPoint 出发地
      * destination 目的地
      * startTime 出发时间
@@ -26,6 +27,7 @@ public class Query {
      * airlineCompany 航空公司
      */
     private int peopleNumber;
+    private int transitTime;
     private String startPoint;
     private String destination;
     private String startTime;
