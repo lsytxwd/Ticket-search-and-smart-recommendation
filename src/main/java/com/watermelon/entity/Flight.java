@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 /**
  * 航班信息
  * 版本 1.0
@@ -16,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class Flight {
 
     /**
+     * id 航班id
      * airlineName 航空公司名称
      * flightNumber 航班号
      * craftTypeName 飞机机型
@@ -32,14 +35,16 @@ public class Flight {
      * arrivalAirportName 目的机场名
      * arrivalAirportTerminal 目的机场航站楼
      * price 机票价格
+     * isTransit 是否换乘
      *
      */
 
+    private Long id;
     private String airlineName;
     private String flightNumber;
     private String craftTypeName;
-    private String departureDate;
-    private String arrivalDate;
+    private Date departureDate;
+    private Date arrivalDate;
     private String departureCityTlc;
     private String departureCityName;
     private String departureAirportTlc;
@@ -50,6 +55,7 @@ public class Flight {
     private String arrivalAirportTlc;
     private String arrivalAirportName;
     private String arrivalAirportTerminal;
-    private String price;
+    private Integer price;
+    private Boolean isTransit;
 
 }

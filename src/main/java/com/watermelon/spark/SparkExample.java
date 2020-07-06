@@ -22,6 +22,7 @@ public class SparkExample {
         JavaRDD<String> rdd = ctx.textFile("hdfs://node-master:9000/SparkTest.txt");
         rdd.foreach(x -> System.out.println(x));
         ctx.stop();
+
     }
 
 }
