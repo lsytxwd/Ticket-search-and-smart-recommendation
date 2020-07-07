@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -15,6 +16,8 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "flight")
 public class Flight {
 
     /**
@@ -39,11 +42,14 @@ public class Flight {
      *
      */
 
+    @Id
     private Long id;
     private String airlineName;
     private String flightNumber;
     private String craftTypeName;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date departureDate;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date arrivalDate;
     private String departureCityTlc;
     private String departureCityName;

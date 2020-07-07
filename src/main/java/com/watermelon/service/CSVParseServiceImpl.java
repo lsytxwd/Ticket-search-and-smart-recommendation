@@ -1,9 +1,12 @@
 package com.watermelon.service;
 
 import com.watermelon.entity.Flight;
+import com.watermelon.repository.FlightRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,9 +16,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Service
 public class CSVParseServiceImpl {
 
-    public List parseCSV(String url) throws IOException, ParseException {
+    /**
+     * 输入url和size，解析url对应的.csv文件，并获取前size条数据返回
+     * @param url
+     * @param size
+     * @return flights
+     * @throws IOException
+     * @throws ParseException
+     */
+    public List parseCSV(String url,int size) throws IOException, ParseException {
 
         //解析csv
         Reader in = new FileReader(url);
@@ -31,7 +43,6 @@ public class CSVParseServiceImpl {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         int count = 0;
         for (CSVRecord record : records) {
-            long id = count;
             String airlineName = record.get(headers.get(0));
             String flightNumber = record.get(headers.get(1));
             String craftTypeName = record.get(headers.get(2));
@@ -48,7 +59,7 @@ public class CSVParseServiceImpl {
             String arrivalAirportName = record.get(headers.get(13));
             String arrivalAirportTerminal = record.get(headers.get(14));
             int price = Integer.parseInt(record.get(headers.get(headers.size()-1)));
-            Flight flight = new Flight(id,
+            Flight flight = new Flight((long) count+1,
                     airlineName,
                     flightNumber,
                     craftTypeName,
@@ -68,7 +79,7 @@ public class CSVParseServiceImpl {
                     false);
             flights.add(flight);
             count++;
-            if (count==20){
+            if (count==size){
                 break;
             }
         }

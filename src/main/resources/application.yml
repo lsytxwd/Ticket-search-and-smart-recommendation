@@ -12,6 +12,11 @@ spring:
     url: jdbc:mysql://localhost:3306/airline_ticket?serverTimezone=UTC
     username: root
     password: 105036
+  jpa:
+    hibernate:
+      #设置自动更新实体类到数据库中，在开发时可以设置为update但在上线使用时更改为none
+      ddl-auto: update
+    show-sql: true
 
 #swagger开关
 switch-swagger-up: true
