@@ -16,24 +16,24 @@ import lombok.NoArgsConstructor;
 public class Query {
 
     /**
-     * peopleNumber 人数
-     * transitTime 中转次数
-     * startPoint 出发地
-     * destination 目的地
-     * startTime 出发时间
-     * returnTime 返程时间
+     * isTransit 是否中转
+     * departureCityName 出发地
+     * arrivalCityName 目的地
+     * departureDate 出发时间
+     * arrivalDate 抵达时间
      * cabinType 机舱等级(枚举：头等舱、商务舱、经济舱)
-     * airPort 机场
-     * airlineCompany 航空公司
+     * departureAirportName 出发机场名称
+     * arrivalAirportName 目的机场名称
+     * airlineName 航空公司
      */
-    private int peopleNumber;
-    private int transitTime;
-    private String startPoint;
-    private String destination;
-    private String startTime;
-    private String returnTime;
+    private boolean isTransit;
+    private String departureCityName;
+    private String arrivalCityName;
+    private String departureDate;
+    private String arrivalDate;
     private CabinType cabinType;
-    private String airPort;
-    private String airlineCompany;
+    private String departureAirportName;
+    private String arrivalAirportName;
+    private String airlineName;
 
 }

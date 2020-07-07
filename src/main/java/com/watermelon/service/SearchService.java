@@ -1,14 +1,21 @@
 package com.watermelon.service;
 
+import com.watermelon.entity.Flight;
 import com.watermelon.entity.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
 public interface SearchService {
 
-    List searchAll();
+    Page searchAll(PageRequest pageRequest);
 
-    List searchByQuery(Query query);
+    List searchByQuery(Query query, PageRequest pageRequest);
 
-    List getCity();
+    Flight searchById(Long id);
+
+    Page getCity(PageRequest pageRequest);
+
+    void saveFlight(Flight flight);
 }
