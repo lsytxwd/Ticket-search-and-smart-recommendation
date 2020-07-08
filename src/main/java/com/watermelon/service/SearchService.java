@@ -24,4 +24,6 @@ public interface SearchService {
     void saveAll(List<Flight> list);
 
     Map getMinPriceByMonth(String begin,String end) throws Exception;
+
+    Map getCityAndPrice(String city);
 }

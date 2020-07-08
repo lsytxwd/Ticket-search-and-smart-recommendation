@@ -2,6 +2,7 @@ package com.watermelon.service;
 
 import com.watermelon.entity.Flight;
 import com.watermelon.entity.Query;
+import com.watermelon.entity.QueryResult;
 import com.watermelon.repository.CityRepository;
 import com.watermelon.repository.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,18 +66,20 @@ public class SearchServiceImpl implements SearchService {
     public Map getMinPriceByMonth(String begin,String end) throws ParseException {
         Map<Date,Integer> dateMap = new HashMap<>();
         Map<Date,Integer> monthMap = new HashMap<>();
-        List<String> dates = listDate(begin,end);
+        List<String> dates = listDate(begin,end,Calendar.DATE);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        //根据日期查询最低价
         for (String dateStr : dates){
             Integer minPrice = flightRepository.findMinPriceByDepartureDate(dateStr);
             Date d = format.parse(dateStr);
             dateMap.put(d,minPrice);
         }
-        List<String> months = listMonth(begin,end);
+        //根据月份查询每个月的平均价格
+        List<String> months = listDate(begin,end,Calendar.MONTH);
         for (String dateStr : months){
             Date date = format.parse(dateStr);
             Integer monthNumber = date.getMonth();
-            Integer minPrice = flightRepository.findeMintPriceByMonth(monthNumber);
+            Integer minPrice = flightRepository.findPriceByMonth(monthNumber);
             monthMap.put(date,minPrice);
         }
         Map<String,Object> map = new HashMap<>();
@@ -85,30 +88,34 @@ public class SearchServiceImpl implements SearchService {
         return map;
     }
 
-    private List<String> listDate(String begin, String end) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date beginDate = format.parse(begin);
-        Date endDate = format.parse(end);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(beginDate);
-        List<String> list = new ArrayList<>();
-        while (!calendar.getTime().after(endDate)){
-            list.add(format.format(calendar.getTime()));
-            calendar.add(Calendar.DATE,1);
+    public Map getCityAndPrice(String city){
+        Map<String,Integer> map = new HashMap<>();
+        List<QueryResult> result = flightRepository.findCityAndPrice(city);
+        for (QueryResult qr : result){
+            map.put(qr.getArrivalCityName(),qr.getMinPrice());
         }
-        return list;
+        return map;
     }
 
-    private List<String> listMonth(String begin, String end) throws ParseException {
+    /**
+     * 根据输入的起始时间、终止时间、时间单位生成一段时间内包含的时间点对应的日期
+     * @param begin
+     * @param end
+     * @param DATE
+     * @return list
+     * @throws ParseException
+     */
+    private List<String> listDate(String begin, String end,int DATE) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date beginDate = format.parse(begin);
         Date endDate = format.parse(end);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(beginDate);
         List<String> list = new ArrayList<>();
+        //遍历一段时间内所包含的时间点
         while (!calendar.getTime().after(endDate)){
             list.add(format.format(calendar.getTime()));
-            calendar.add(Calendar.MONTH,1);
+            calendar.add(DATE,1);
         }
         return list;
     }

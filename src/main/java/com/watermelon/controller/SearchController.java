@@ -8,6 +8,7 @@ import com.watermelon.service.SearchService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,9 @@ import java.util.Map;
 
 @RestController
 public class SearchController {
+
+    @Value("${csv-path}")
+    private String csvPath;
 
     @Autowired
     private SearchService searchService;
@@ -65,12 +69,19 @@ public class SearchController {
         return map;
     }
 
+    @ApiOperation(value = "查询可达目的地的最低价",notes = "根据出发地查找可达的目的地及其对应的最低票价")
+    @GetMapping("/searchCityPrice")
+    public Map getCityAndPrice(@ApiParam(value="出发城市",example="成都") @RequestParam String city) throws Exception {
+        Map<String,Integer> map = searchService.getCityAndPrice(city);
+        return map;
+    }
+
     @Deprecated
-    @ApiOperation(value = "查询CSV数据",notes = "从.csv文件中查询数据,size设定查询数量，putDatabase设定是否写入数据库")
+    @ApiOperation(value = "查询CSV数据(不推荐使用)",notes = "从.csv文件中查询数据,size设定查询数量，putDatabase设定是否写入数据库")
     @GetMapping("/searchCSV")
     public Object searchFromCSVFile(@ApiParam(value="数据条数",example="50") @RequestParam int size,
                                     @ApiParam(value="是否将查询的数据写入数据库",example="false") @RequestParam boolean putDatabase) throws IOException, ParseException {
-        String url = "D:/部分文件/课程内容/实习/文档/ticket1.csv";
+        String url = csvPath;
         List<Flight> list = new CSVParseServiceImpl().parseCSV(url,size);
         if (putDatabase){
             searchService.saveAll(list);

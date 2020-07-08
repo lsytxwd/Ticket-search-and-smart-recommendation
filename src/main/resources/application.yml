@@ -20,3 +20,6 @@ spring:
 
 #swagger开关
 switch-swagger-up: true
+
+#csv文件路径
+csv-path: "D:/部分文件/课程内容/实习/文档/ticket1.csv"

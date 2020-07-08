@@ -1,6 +1,7 @@
 package com.watermelon.repository;
 
 import com.watermelon.entity.Flight;
+import com.watermelon.entity.QueryResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,11 +30,13 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
                              String airlineName,
                              PageRequest request);
 
-//    @Query("select min(price) from Flight where DATE_FORMAT(departureDate,'%Y-%m-%d')=?1")
     @Query("select min(price) from Flight where departureDate=str_to_date(?1,'%Y-%m-%d')")
     Integer findMinPriceByDepartureDate(String date);
 
     @Query("select avg(price) from Flight where month(departureDate)=?1")
-    Integer findeMintPriceByMonth(Integer month);
+    Integer findPriceByMonth(Integer month);
+
+    @Query(" select new com.watermelon.entity.QueryResult(arrivalCityName,min(price)) from Flight where departureCityName=?1 group by arrivalCityName")
+    List<QueryResult> findCityAndPrice(String city);
 
 }
