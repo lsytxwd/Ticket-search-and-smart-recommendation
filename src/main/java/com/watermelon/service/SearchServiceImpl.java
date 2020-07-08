@@ -29,8 +29,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List searchByQuery(Query query,PageRequest request) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    public List searchByQuery(Query query,PageRequest request) {
         String departureCityName = query.getDepartureCityName();
         String arrivalCityName = query.getArrivalCityName();
         String departureDate = query.getDepartureDate();
@@ -64,37 +63,47 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public Map getMinPriceByMonth(String begin,String end) throws ParseException {
-        Map<Date,Integer> dateMap = new HashMap<>();
-        Map<Date,Integer> monthMap = new HashMap<>();
+        List<Map<String,String>> dateList = new ArrayList<>();
+        List<Map<String,String>> monthList = new ArrayList<>();
+        //获取从begin到end这段时间内的日期
         List<String> dates = listDate(begin,end,Calendar.DATE);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         //根据日期查询最低价
         for (String dateStr : dates){
+            Map<String,String> dateMap = new HashMap<>();
             Integer minPrice = flightRepository.findMinPriceByDepartureDate(dateStr);
-            Date d = format.parse(dateStr);
-            dateMap.put(d,minPrice);
+            dateMap.put("date",dateStr);
+            dateMap.put("price",minPrice+"");
+            dateList.add(dateMap);
         }
         //根据月份查询每个月的平均价格
         List<String> months = listDate(begin,end,Calendar.MONTH);
         for (String dateStr : months){
+            Map<String,String> monthMap = new HashMap<>();
             Date date = format.parse(dateStr);
-            Integer monthNumber = date.getMonth();
+            Integer monthNumber = date.getMonth()+1;
             Integer minPrice = flightRepository.findPriceByMonth(monthNumber);
-            monthMap.put(date,minPrice);
+            //由于date的字符串为2020-06-07格式，因此截取前7个字符作为年月
+            monthMap.put("month",dateStr.substring(0,7));
+            monthMap.put("price",minPrice+"");
+            monthList.add(monthMap);
         }
         Map<String,Object> map = new HashMap<>();
-        map.put("month",monthMap);
-        map.put("date",dateMap);
+        map.put("month",monthList);
+        map.put("date",dateList);
         return map;
     }
 
-    public Map getCityAndPrice(String city){
-        Map<String,Integer> map = new HashMap<>();
+    public List getCityAndPrice(String city){
+        List<Map<String,String>> list = new ArrayList<>();
         List<QueryResult> result = flightRepository.findCityAndPrice(city);
         for (QueryResult qr : result){
-            map.put(qr.getArrivalCityName(),qr.getMinPrice());
+            Map<String,String> map = new HashMap<>();
+            map.put("city",qr.getArrivalCityName());
+            map.put("price",qr.getMinPrice()+"");
+            list.add(map);
         }
-        return map;
+        return list;
     }
 
     /**

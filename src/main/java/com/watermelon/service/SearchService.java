@@ -25,5 +25,5 @@ public interface SearchService {
 
     Map getMinPriceByMonth(String begin,String end) throws Exception;
 
-    Map getCityAndPrice(String city);
+    List getCityAndPrice(String city);
 }

@@ -53,7 +53,7 @@ public class SearchController {
         return searchService.getCity(pageRequest);
     }
 
-    @ApiOperation(value = "查询航班信息",notes = "根据Id查询单个航班信息")
+    @ApiOperation(value = "根据ID查询航班信息",notes = "根据Id查询单个航班信息")
     @GetMapping("/searchById")
     public Object searchById(@ApiParam(value="航线id",example="1") @RequestParam long id) {
         Flight flight = searchService.searchById(id);
@@ -71,9 +71,8 @@ public class SearchController {
 
     @ApiOperation(value = "查询可达目的地的最低价",notes = "根据出发地查找可达的目的地及其对应的最低票价")
     @GetMapping("/searchCityPrice")
-    public Map getCityAndPrice(@ApiParam(value="出发城市",example="成都") @RequestParam String city) throws Exception {
-        Map<String,Integer> map = searchService.getCityAndPrice(city);
-        return map;
+    public List getCityAndPrice(@ApiParam(value="出发城市",example="成都") @RequestParam String city) throws Exception {
+        return searchService.getCityAndPrice(city);
     }
 
     @Deprecated
