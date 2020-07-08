@@ -9,6 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,11 +29,12 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List searchByQuery(Query query,PageRequest request) {
+    public List searchByQuery(Query query,PageRequest request) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String departureCityName = query.getDepartureCityName();
         String arrivalCityName = query.getArrivalCityName();
-        String departureDate = query.getDepartureDate();
-        String arrivalDate = query.getArrivalDate();
+        Date departureDate = format.parse(query.getDepartureDate());
+        Date arrivalDate = format.parse(query.getArrivalDate());
         String departureAirportName = query.getDepartureAirportName();
         String airlineName = query.getAirlineName();
         return flightRepository.findByQuery(departureCityName,arrivalCityName,departureDate,arrivalDate,departureAirportName,airlineName,request);
@@ -49,7 +53,13 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public void saveFlight(Flight flight) {
+
         flightRepository.save(flight);
+    }
+
+    @Override
+    public void saveAll(List<Flight> list) {
+        flightRepository.saveAll(list);
     }
 
 

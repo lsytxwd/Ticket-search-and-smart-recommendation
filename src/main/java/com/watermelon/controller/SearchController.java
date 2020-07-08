@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,26 +24,26 @@ public class SearchController {
 
     @ApiOperation(value = "查询航班信息",notes = "分页查询所有航班信息")
     @GetMapping("/searchAll")
-    public Object searchAllAirline(@ApiParam(value="页数",example="1") @RequestParam int pageNumber ,
-                                   @ApiParam(value="页内数据条数",example="10") @RequestParam int pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber-1,pageSize);
+    public Object searchAllAirline(@ApiParam(value="页数",example="1") @RequestParam int page ,
+                                   @ApiParam(value="页内数据条数",example="10") @RequestParam int limit) {
+        PageRequest pageRequest = PageRequest.of(page-1,limit);
         return searchService.searchAll(pageRequest);
     }
 
     @ApiOperation(value = "详细查询航班信息",notes = "根据详细信息匹配查询航班信息，约束条件为模糊匹配")
     @PostMapping("/searchByQuery")
-    public List searchAirline(@ApiParam(value="页数",example="1") @RequestParam int pageNumber ,
-                              @ApiParam(value="页内数据条数",example="10") @RequestParam int pageSize,
-                              @ApiParam(value="查询条件") Query query){
-        PageRequest pageRequest = PageRequest.of(pageNumber-1,pageSize);
+    public List searchAirline(@ApiParam(value="页数",example="1") @RequestParam int page ,
+                              @ApiParam(value="页内数据条数",example="10") @RequestParam int limit,
+                              @ApiParam(value="查询条件") Query query) throws Exception {
+        PageRequest pageRequest = PageRequest.of(page-1,limit);
         return searchService.searchByQuery(query,pageRequest);
     }
 
     @ApiOperation(value = "查询城市信息",notes = "分页查询城市信息，返回城市名称及三字码")
     @GetMapping("/searchCity")
-    public Page searchCity(@ApiParam(value="页数",example="1") @RequestParam int pageNumber ,
-                           @ApiParam(value="页内数据条数",example="10") @RequestParam int pageSize){
-        PageRequest pageRequest = PageRequest.of(pageNumber-1,pageSize);
+    public Page searchCity(@ApiParam(value="页数",example="1") @RequestParam int page ,
+                           @ApiParam(value="页内数据条数",example="10") @RequestParam int limit){
+        PageRequest pageRequest = PageRequest.of(page-1,limit);
         return searchService.getCity(pageRequest);
     }
 
@@ -64,9 +63,7 @@ public class SearchController {
         String url = "D:/部分文件/课程内容/实习/文档/ticket1.csv";
         List<Flight> list = new CSVParseServiceImpl().parseCSV(url,size);
         if (putDatabase){
-            for (Flight f : list){
-                searchService.saveFlight(f);
-            }
+            searchService.saveAll(list);
         }
         Object object = JSON.toJSON(list);
         return object;

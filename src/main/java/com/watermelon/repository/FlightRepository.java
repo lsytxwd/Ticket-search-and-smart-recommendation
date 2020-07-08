@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
 import java.util.List;
 
 public interface FlightRepository extends JpaRepository<Flight, Long> {
@@ -22,8 +23,8 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
             "f.airlineName like ?6")
     List<Flight> findByQuery(String departureCityName,
                              String arrivalCityName,
-                             String departureDate,
-                             String arrivalDate,
+                             Date departureDate,
+                             Date arrivalDate,
                              String departureAirportName,
                              String airlineName,
                              PageRequest request);
