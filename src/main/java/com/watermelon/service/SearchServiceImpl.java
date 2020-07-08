@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SearchServiceImpl implements SearchService {
@@ -30,11 +29,11 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List searchByQuery(Query query,PageRequest request) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String departureCityName = query.getDepartureCityName();
         String arrivalCityName = query.getArrivalCityName();
-        Date departureDate = format.parse(query.getDepartureDate());
-        Date arrivalDate = format.parse(query.getArrivalDate());
+        String departureDate = query.getDepartureDate();
+        String arrivalDate = query.getArrivalDate();
         String departureAirportName = query.getDepartureAirportName();
         String airlineName = query.getAirlineName();
         return flightRepository.findByQuery(departureCityName,arrivalCityName,departureDate,arrivalDate,departureAirportName,airlineName,request);
@@ -62,5 +61,56 @@ public class SearchServiceImpl implements SearchService {
         flightRepository.saveAll(list);
     }
 
+    @Override
+    public Map getMinPriceByMonth(String begin,String end) throws ParseException {
+        Map<Date,Integer> dateMap = new HashMap<>();
+        Map<Date,Integer> monthMap = new HashMap<>();
+        List<String> dates = listDate(begin,end);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        for (String dateStr : dates){
+            Integer minPrice = flightRepository.findMinPriceByDepartureDate(dateStr);
+            Date d = format.parse(dateStr);
+            dateMap.put(d,minPrice);
+        }
+        List<String> months = listMonth(begin,end);
+        for (String dateStr : months){
+            Date date = format.parse(dateStr);
+            Integer monthNumber = date.getMonth();
+            Integer minPrice = flightRepository.findeMintPriceByMonth(monthNumber);
+            monthMap.put(date,minPrice);
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("month",monthMap);
+        map.put("date",dateMap);
+        return map;
+    }
+
+    private List<String> listDate(String begin, String end) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date beginDate = format.parse(begin);
+        Date endDate = format.parse(end);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(beginDate);
+        List<String> list = new ArrayList<>();
+        while (!calendar.getTime().after(endDate)){
+            list.add(format.format(calendar.getTime()));
+            calendar.add(Calendar.DATE,1);
+        }
+        return list;
+    }
+
+    private List<String> listMonth(String begin, String end) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date beginDate = format.parse(begin);
+        Date endDate = format.parse(end);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(beginDate);
+        List<String> list = new ArrayList<>();
+        while (!calendar.getTime().after(endDate)){
+            list.add(format.format(calendar.getTime()));
+            calendar.add(Calendar.MONTH,1);
+        }
+        return list;
+    }
 
 }

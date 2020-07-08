@@ -17,16 +17,23 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     @Query("select f from Flight f where " +
             "f.departureCityName like ?1 or " +
             "f.arrivalCityName like ?2 or " +
-            "f.departureDate = ?3 or " +
-            "f.arrivalDate = ?4 or " +
+            "DATE_FORMAT(f.departureDate,'%Y-%m-%d') like ?3 or " +
+            "DATE_FORMAT(f.arrivalDate,'%Y-%m-%d') like ?4 or " +
             "f.departureAirportName like ?5 or " +
             "f.airlineName like ?6")
     List<Flight> findByQuery(String departureCityName,
                              String arrivalCityName,
-                             Date departureDate,
-                             Date arrivalDate,
+                             String departureDate,
+                             String arrivalDate,
                              String departureAirportName,
                              String airlineName,
                              PageRequest request);
+
+//    @Query("select min(price) from Flight where DATE_FORMAT(departureDate,'%Y-%m-%d')=?1")
+    @Query("select min(price) from Flight where departureDate=str_to_date(?1,'%Y-%m-%d')")
+    Integer findMinPriceByDepartureDate(String date);
+
+    @Query("select avg(price) from Flight where month(departureDate)=?1")
+    Integer findeMintPriceByMonth(Integer month);
 
 }

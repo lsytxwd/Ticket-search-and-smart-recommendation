@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class SearchController {
@@ -24,26 +26,26 @@ public class SearchController {
 
     @ApiOperation(value = "查询航班信息",notes = "分页查询所有航班信息")
     @GetMapping("/searchAll")
-    public Object searchAllAirline(@ApiParam(value="页数",example="1") @RequestParam int page ,
-                                   @ApiParam(value="页内数据条数",example="10") @RequestParam int limit) {
-        PageRequest pageRequest = PageRequest.of(page-1,limit);
+    public Object searchAllAirline(@ApiParam(value="页数",example="1") @RequestParam int pageNumber ,
+                                   @ApiParam(value="页内数据条数",example="10") @RequestParam int pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNumber-1,pageSize);
         return searchService.searchAll(pageRequest);
     }
 
     @ApiOperation(value = "详细查询航班信息",notes = "根据详细信息匹配查询航班信息，约束条件为模糊匹配")
     @PostMapping("/searchByQuery")
-    public List searchAirline(@ApiParam(value="页数",example="1") @RequestParam int page ,
-                              @ApiParam(value="页内数据条数",example="10") @RequestParam int limit,
+    public List searchAirline(@ApiParam(value="页数",example="1") @RequestParam int pageNumber ,
+                              @ApiParam(value="页内数据条数",example="10") @RequestParam int pageSize,
                               @ApiParam(value="查询条件") Query query) throws Exception {
-        PageRequest pageRequest = PageRequest.of(page-1,limit);
+        PageRequest pageRequest = PageRequest.of(pageNumber-1,pageSize);
         return searchService.searchByQuery(query,pageRequest);
     }
 
     @ApiOperation(value = "查询城市信息",notes = "分页查询城市信息，返回城市名称及三字码")
     @GetMapping("/searchCity")
-    public Page searchCity(@ApiParam(value="页数",example="1") @RequestParam int page ,
-                           @ApiParam(value="页内数据条数",example="10") @RequestParam int limit){
-        PageRequest pageRequest = PageRequest.of(page-1,limit);
+    public Page searchCity(@ApiParam(value="页数",example="1") @RequestParam int pageNumber ,
+                           @ApiParam(value="页内数据条数",example="10") @RequestParam int pageSize){
+        PageRequest pageRequest = PageRequest.of(pageNumber-1,pageSize);
         return searchService.getCity(pageRequest);
     }
 
@@ -53,6 +55,14 @@ public class SearchController {
         Flight flight = searchService.searchById(id);
         Object object = JSON.toJSON(flight);
         return object;
+    }
+
+    @ApiOperation(value = "查询未来一段时间内单日最低票价",notes = "根据起始日期和截止日期查询这一段时间内的最低票价 ")
+    @GetMapping("/searchMinPriceByMonth")
+    public Map getMinPriceByMonth(@ApiParam(value="起始日期",example="2020-07-06") @RequestParam String begin,
+                                  @ApiParam(value="截止日期",example="2020-08-06")@RequestParam String end) throws Exception {
+        Map<String,Object> map = searchService.getMinPriceByMonth(begin,end);
+        return map;
     }
 
     @Deprecated
