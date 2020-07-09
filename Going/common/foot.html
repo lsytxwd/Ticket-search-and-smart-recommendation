@@ -1,0 +1,55 @@
+<meta charset="UTF-8" />
+
+<script>
+	function hide_left_menu() {
+		$("#left_menu").toggle();
+		//判断display  是啥  display: none;  display: block;
+		var display_ = $("#left_menu").css("display");
+		if (display_ == 'none') {
+			$("#main_scroll").css("padding-left", "0px");
+			left_width = 0 ;
+		} else {
+			$("#main_scroll").css("padding-left", "200px");
+			left_width =200;
+		}
+		init_tab_height();
+	}
+
+</script>
+
+<style>
+/* 顶部 导航整块的间距取消   默认20 */
+.layui-nav{
+	padding: 0 0px;
+}
+/* 顶部 导航 菜单 之间 间距15  默认20 */
+.layui-nav .layui-nav-item a {
+    padding: 0 15px;
+}
+</style>
+
+<div style="height: 60px; width: 100%; background-color: #23262E; display: flex; display: -webkit-flex;">
+
+
+	<div style="flex: 1; -webkit-flex: 1; ">
+		<!--<ul class="layui-nav" style="background-color: #000000;padding-left: 700px">-->
+			<!--<li class="layui-nav-item"><a href="#"  style="color: #3fb3db">考试答题</a></li>-->
+			<!--<li class="layui-nav-item"><a onclick="toggleFullScreen()"  style="color: #3fb3db">查看成绩</a></li>-->
+		<!--</ul>-->
+        <span class="layui-breadcrumb" lay-separator="|" style="padding-left: 30%">
+                  <a href="">关于我们</a>
+                  <a href="">在线咨询</a>
+                  <a href="">新航次</a>
+                  <a href="">人工咨询</a>
+                  <a href="">我的航班</a>
+                  <a href="">在线查询</a>
+                  <a href="">18282012015</a>
+        </span><br>
+        <p style="color: #999;padding-left: 40%">© 2020 suncaper.com MIT license</p>
+
+<p style="color: #999;padding-left: 45%;">第一小组</p>
+	</div>
+
+
+</div>
+

@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>后台界面</title>
+
+<link rel="stylesheet"	href="layui/layui/css/layui.css">
+<!--<link rel="stylesheet"	href="layui/laydate/theme/default/laydate.css">-->
+<script	src="layui/layui/layui.js"></script>
+<!--<script	src="layui/laydate/laydate.js"></script>-->
+<script src="jq3.4.1/jquery-1.12.4.min.js"></script>
+<script src="jq3.4.1/echarts.min.js"></script>
+
+
+</head>
+<style>
+    #web_bg{
+  position:fixed;
+  top: 0;
+  left: 0;
+  width:100%;
+  height:100%;
+  min-width: 1000px;
+  z-index:-10;
+  zoom: 1;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-size: cover;
+  -webkit-background-size: cover;
+  -o-background-size: cover;
+  background-position: center 0;
+}
+	.MyMonth{
+		height: 47%;
+		width: 98%;
+		position: absolute;
+		left: 1%;
+		margin-top: 1%;
+		/*background-color: #00aa00;*/
+	}
+	.fromLeft{
+		position: absolute;
+		bottom: 1%;
+		left: 2%;
+		height: 45%;
+		width: 47%;
+		/*background-color: #00F7DE;*/
+		padding-right: 1%;
+	}
+	.goBackRight{
+		position: absolute;
+		bottom: 1%;
+		right: 3%;
+		height: 45%;
+		width: 47%;
+		/*background-color: #db3987;*/
+		padding-left: 1%;
+	}
+html,body{
+	min-width: 1024px;
+	 height:100%;
+	 overflow: hidden;
+}
+.layui-tab-item{
+	overflow-x: scroll;
+}
+.isMonthHead{
+	height: 10%;
+	color:#ffffff ;
+	/*background-color: #101c57;*/
+}
+</style>
+
+<script>
+
+//定义在外面
+var table;
+var element;
+layui.use([  'laypage', 'layer','form', 'table', 'carousel',
+			'upload', 'element' ], function() {
+	table = layui.table;
+	element = layui.element; //元素操作
+});
+
+//这个值是由  manage_top.jsp里面的一个显示隐藏的侧边的方法控制
+var left_width = 0 ;
+
+//可以从子页面传来个 关闭  由我关闭
+function delete_tab_id(id){
+	 element.tabDelete('layer_tab', id); //
+}
+
+$(function(){
+	init_tab_height();
+	window.onresize = function(){
+		init_tab_height();
+	}
+});
+
+
+//遍历选项卡，存在true  不存在false
+function for_tab(id){
+	add_flag = false;
+	$(".layui-tab-title li").each(function(){
+		var lay_id = $(this).attr("lay-id");
+		console.log(lay_id);
+		if(lay_id){
+			if(lay_id==id){
+				add_flag = true;
+			}
+		}
+	});
+	return add_flag;
+}
+
+function init_tab_height(){
+	var body_width = document.body.offsetWidth;
+	layui_tab_item_width = (body_width-left_width);
+	console.log("layui_tab_item的宽是:"+layui_tab_item_width);
+
+	//计算layui-tab-item 需要 设置多少的高 顶部的60  layui-tab-title=41
+	var body_height = document.body.offsetHeight;
+	layui_tab_item_height = (body_height-60-41);
+	$(".layui-tab-item").css("height",layui_tab_item_height+"px");
+	console.log("layui_tab_item的高是:"+layui_tab_item_height);
+}
+
+function addTab(id,title,content){
+	//遍历tab 看看这个id是否存在  如果存在直接切换
+	var s = for_tab(id);
+	if(s){
+		element.tabChange('layer_tab', id); //切换到 用户点的
+		init_tab_height();
+	}else{
+		//添加
+		element.tabAdd('layer_tab', {
+        title: title
+        ,content: content
+        ,id: id
+      });
+	element.tabChange('layer_tab', id); //切换到 用户点的
+	init_tab_height();
+	}
+}
+</script>
+
+<body  id="web_bg" style="background-image: url(images/bg.jpg);">
+<div style="display: flex;display: -webkit-flex; flex-direction:column; height: 100%; ">
+	<div id="Top" style="height: 60px; width: 100%;">
+	</div>
+
+		<div id="main_scroll" style="flex:1;-webkit-flex:1;padding-left: 0px;">
+			<div class="layui-tab layui-tab-brief" lay-allowclose="true"  style="margin: 0;height: 100%"  lay-filter="layer_tab">
+				<div class="MyMonth">
+					<div class="isMonthHead">
+						<i class="layui-icon layui-icon-release layui-anim layui-anim-scaleSpring" style="font-size: 20px; color: #0adb1e"></i>
+						<span>已选：</span><span id="a1">七月</span>&nbsp;&nbsp;&nbsp;<span id="a2">北京</span>---<span id="a3">上海</span>
+					</div>
+					<div id="isMyMonth" style="height: 80%;width: 100%"></div>
+				</div>
+
+
+
+
+
+				<div class="fromLeft">
+                    <div class="isMonthHead">
+						<i class="layui-icon layui-icon-vercode layui-anim layui-anim-scaleSpring" style="font-size: 20px; color: #0adb1e"></i>
+						<span style="background-color: #0adb1e">启程：</span><span>七月</span>&nbsp;&nbsp;&nbsp;<span>北京</span>---<span>上海</span>
+					</div>
+                    <div id="isMyGo" style="height: 100%;width: 100%;background-color: #00F7DE"></div>
+                </div>
+				<div class="goBackRight">
+                    <div class="isMonthHead">
+						<i class="layui-icon layui-icon-vercode layui-anim layui-anim-scaleSpring" style="font-size: 20px; color: #0adb1e"></i>
+						<span style="background-color: rosybrown">回城：</span><span>七月</span>&nbsp;&nbsp;&nbsp;<span>上海</span>---<span>北京</span>
+					</div>
+                    <div id="isMyBack" style="height: 100%;width: 100%;background-color: #00F7DE"></div>
+                </div>
+		</div>
+		</div>
+
+</div>
+
+</body>
+<script>
+
+    $(function(){
+        $("#Top").load("common/top2.html")
+        $("#Foot").load("common/foot.html")
+    })
+
+	layui.use([ 'laydate', 'laypage', 'layer', 'table', 'carousel',
+			'upload', 'element' ], function() {
+		var laydate = layui.laydate //日期
+		, laypage = layui.laypage //分页
+		,layer = layui.layer //弹层
+		, table = layui.table //表格
+		, carousel = layui.carousel //轮播
+		, upload = layui.upload //上传
+		, element = layui.element; //元素操作
+
+		//监听导航点击
+		element.on('nav(left_menu)', function(elem){
+			// $(this)
+			elem = $(this).parent();
+
+		    var id = $(elem).attr("id");
+			var url = $(elem).attr("url");
+			var text = $(elem).attr("dd_text");
+			var type = $(elem).attr("type");
+
+			console.log(id);
+			console.log(url);
+			console.log(text);
+			console.log(type);
+			var content = "<iframe frameborder=0 scrolling='auto' style='width:100%;height:100%' src='"+url+"'></iframe>";
+
+
+			switch(type){
+			  case '0':
+				  addTab(id,text,content);
+			  break;
+				case '1':
+					window.open(url);
+				  break;
+				case '2':
+				  //弹出layer 窗口
+				  layer.open({
+					  type: 2,
+					  offset: ['300px', '200px'],
+					  title: text,
+					  shadeClose: false,
+					  shade: 0.8,
+					  area: ['500px', '600px'],
+					  content: url //iframe的url
+				   });
+				  break;
+			}
+
+
+		  });
+
+	});
+</script>
+<script>
+    //启程1-12月最低价数据存放
+  var myFromData1 =[]
+  var myFromData2 = []
+  var myFromData3 =[]
+  var myFromData4 = []
+  var myFromData5 =[]
+  var myFromData6 = []
+  var myFromData7 =[]
+  var myFromData8 = []
+  var myFromData9 =[]
+  var myFromData10 = []
+  var myFromData11 =[]
+  var myFromData12 = []
+ //归程1-12月最低价数据存放
+  var myBackData1 = []
+     var myBackData2 = []
+     var myBackData3 = []
+     var myBackData4 = []
+     var myBackData5 = []
+     var myBackData6 = []
+     var myBackData7 = []
+     var myBackData8 = []
+     var myBackData9 = []
+     var myBackData10 = []
+     var myBackData11 = []
+     var myBackData12 = []
+    //存放需要显示的月份：“七月 八月”
+  var monthData=[]
+    //存放对应显示的最低价
+  var myMonthMinPrice=[]
+
+
+    $(function(){
+
+
+        if(sessionStorage.getItem("departureCityName")==null)
+        {
+            //初始查询信息
+			var departureCityName="北京";
+			sessionStorage.setItem("departureCityName",departureCityName)
+			var arrivalCityName="上海";
+			sessionStorage.setItem("arrivalCityName",arrivalCityName)
+			var d=new Date();
+			var month= d.getMonth()+1
+			var departureDate= d.getFullYear()+"-"+ month+"-"+ d.getDate();
+			sessionStorage.setItem("departureDate",departureDate)
+			var cabinType="经济舱";
+			sessionStorage.setItem("cabinType",cabinType)
+			var isTransit=false;
+			sessionStorage.setItem("isTransit",isTransit)
+			var d=new Date();
+			sessionStorage.setItem("d", d.getMonth()+1)
+            houTaiAjax()
+        }else{
+            houTaiAjax()
+        }
+
+        function isMyGo(myData){
+                var isMyGo=echarts.init(document.getElementById('isMyGo'));
+//                var data = [
+//            {
+//                month: "1",
+//                value: 2500
+//            },
+//
+//            {
+//                month: "2",
+//                value: 2800
+//            },
+//
+//            {
+//                month: "3",
+//                value: 3000
+//            },
+//
+//            {
+//                month: "4",
+//                value: 2600
+//            },
+//
+//            {
+//                month: "5",
+//                value: 3500
+//            },
+//
+//
+//            {
+//                month: "6",
+//                value: 2500
+//            },
+//            {
+//                month: "7",
+//                value: 3200
+//            },
+//            {
+//                month: "8",
+//                value: 3100
+//            },
+//            {
+//                month: "9",
+//                value: 2900
+//            },
+//            {
+//                month: "10",
+//                value: 2500
+//            },
+//            {
+//                month: "11",
+//                value: 3600
+//            },
+//            {
+//                month: "12",
+//                value: 3400
+//            },
+//            {
+//                month: "13",
+//                value: 2800
+//            },
+//            {
+//                month: "14",
+//                value: 3000
+//            },
+//            {
+//                month: "15",
+//                value: 2400
+//            },
+//            {
+//                month: "16",
+//                value: 2400
+//            },{
+//                month: "17",
+//                value: 2400
+//            },{
+//                month: "18",
+//                value: 2400
+//            },{
+//                month: "19",
+//                value: 2400
+//            },{
+//                month: "20",
+//                value: 4000
+//            },{
+//                month: "21",
+//                value: 4100
+//            },{
+//                month: "22",
+//                value: 1200
+//            },{
+//                month: "23",
+//                value: 2300
+//            },{
+//                month: "24",
+//                value: 2900
+//            },{
+//                month: "25",
+//                value: 2000,
+//                ratio: 87.3
+//            },{
+//                month: "26",
+//                value: 2100
+//            },{
+//                month: "27",
+//                value:3100
+//            },{
+//                month: "28",
+//                value: 3600
+//            },{
+//                month: "30",
+//                value: 2400
+//            },{
+//                month: "31",
+//                value: 2400
+//            }
+//            ];
+               var data=myData
+                var xData = [],
+                    yData = [];
+                var min = 50;
+                data.map(function(a, b) {
+                    xData.push(a.month);
+                    if (a.value === 0) {
+                        yData.push(a.value + min);
+                    } else {
+                        yData.push(a.value);
+                    }
+                });
+                option2 = {
+                    backgroundColor:"#111c4e",
+                    color: ['#3398DB'],
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'line',
+                            lineStyle: {
+                                opacity: 0
+                            }
+                        },
+                        formatter: function(prams) {
+                            if (prams[0].data === min) {
+                                return "航线价格：0"
+                            } else {
+                                return "航线价格：" + prams[0].data
+                            }
+                        }
+                    },
+                    legend: {
+                        data: ['直接访问', '背景'],
+                        show: false
+                    },
+                    grid: {
+                        left: '5%',
+                        right: '1%',
+                        bottom: '5%',
+                        top: '5%',
+                        height: '85%',
+                        containLabel: true,
+                        z: 22
+                    },
+                    xAxis: [{
+                        type: 'category',
+                        gridIndex: 0,
+                        data: xData,
+                        axisTick: {
+                            alignWithLabel: true
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#0c3b71'
+                            }
+                        },
+                        axisLabel: {
+                            show: true,
+                             color: 'rgb(170,170,170)',
+                             fontSize:16
+                        }
+                    }],
+                    yAxis: [{
+                            type: 'value',
+                            name:"单位:天",
+                            nameTextStyle:{
+                              color:"rgb(170,170,170)"
+                            },
+                            gridIndex: 0,
+                            splitLine: {
+                                show: false
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            // min: min,
+                            // max: 100,
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#0c3b71'
+                                }
+                            },
+                            axisLabel: {
+                                color: 'rgb(170,170,170)',
+//                                formatter: '{value}'
+                            }
+                        },
+                        {
+                            type: 'value',
+                            gridIndex: 0,
+                            min: min,
+                            max: 100,
+                            splitNumber: 12,
+                            splitLine: {
+                                show: false
+                            },
+                            axisLine: {
+                                show: false
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                show: false
+                            },
+                            splitArea: {
+                                show: true,
+                                areaStyle: {
+                                    color: ['rgba(250,250,250,0.0)', 'rgba(250,250,250,0.05)']
+                                }
+                            }
+                        }
+                    ],
+                    series: [{
+                            name: '价格',
+                            type: 'bar',
+                            barWidth: '30%',
+                            xAxisIndex: 0,
+                            yAxisIndex: 0,
+                            itemStyle: {
+                                normal: {
+                                    barBorderRadius: 30,
+                                    color: new echarts.graphic.LinearGradient(
+                                        0, 0, 0, 1, [{
+                                                offset: 0,
+                                                color: '#00feff'
+                                            },
+                                            {
+                                                offset: 0.5,
+                                                color: '#027eff'
+                                            },
+                                            {
+                                                offset: 1,
+                                                color: '#0286ff'
+                                            }
+                                        ]
+                                    )
+                                }
+                            },
+                            data: yData,
+                            zlevel: 11
+
+                        },
+                        {
+                            name: '背景',
+                            type: 'bar',
+                            barWidth: '50%',
+                            xAxisIndex: 0,
+                            yAxisIndex: 1,
+                            barGap: '-135%',
+                            data: [100, 100, 100, 100, 100, 100, 100,100, 100, 100, 100, 100, 100, 100,100, 100, 100, 100, 100, 100, 100,100, 100, 100, 100, 100, 100, 100,100,100,100],
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgba(255,255,255,0.1)'
+                                }
+                            },
+                            zlevel: 9
+                        },
+
+                    ]
+                };
+                isMyGo.setOption(option2);
+                isMyGo.on('click', function (params) {
+                   alert(params.name)
+                   sessionStorage.setItem("departureDate",departureDate)
+                });
+            }
+//        isMyGo()
+
+        function isMyBack(myData){
+            var isMyBack=echarts.init(document.getElementById('isMyBack'));
+            var data = [{
+            month: "1",
+            value: 2500,
+            ratio: 14.89
+        },
+
+        {
+            month: "2",
+            value: 2800,
+            ratio: 79.49
+        },
+
+        {
+            month: "3",
+            value: 3000,
+            ratio: 75.8
+        },
+
+        {
+            month: "4",
+            value: 2600,
+            ratio: 19.8
+        },
+
+        {
+            month: "5",
+            value: 3500,
+            ratio: 44.5
+        },
+
+
+        {
+            month: "6",
+            value: 2500,
+            ratio: 87.3
+        },
+        {
+            month: "7",
+            value: 3200,
+            ratio: 87.3
+        },
+        {
+            month: "8",
+            value: 3100,
+            ratio: 87.3
+        },
+        {
+            month: "9",
+            value: 2900,
+            ratio: 87.3
+        },
+        {
+            month: "10",
+            value: 2500,
+            ratio: 87.3
+        },
+        {
+            month: "11",
+            value: 3600,
+            ratio: 87.3
+        },
+        {
+            month: "12",
+            value: 3400,
+            ratio: 87.3
+        },
+        {
+            month: "13",
+            value: 2800,
+            ratio: 87.3
+        },
+        {
+            month: "14",
+            value: 3000,
+            ratio: 87.3
+        },
+        {
+            month: "15",
+            value: 2400,
+            ratio: 87.3
+        },
+        {
+            month: "16",
+            value: 2400,
+            ratio: 87.3
+        },{
+            month: "17",
+            value: 2400,
+            ratio: 87.3
+        },{
+            month: "18",
+            value: 2400,
+            ratio: 87.3
+        },{
+            month: "19",
+            value: 2400,
+            ratio: 87.3
+        },{
+            month: "20",
+            value: 4000,
+            ratio: 87.3
+        },{
+            month: "21",
+            value: 4100,
+            ratio: 87.3
+        },{
+            month: "22",
+            value: 1200,
+            ratio: 87.3
+        },{
+            month: "23",
+            value: 2300,
+            ratio: 87.3
+        },{
+            month: "24",
+            value: 2900,
+            ratio: 87.3
+        },{
+            month: "25",
+            value: 2000,
+            ratio: 87.3
+        },{
+            month: "26",
+            value: 2100,
+            ratio: 87.3
+        },{
+            month: "27",
+            value:3100,
+            ratio: 87.3
+        },{
+            month: "28",
+            value: 3600,
+            ratio: 87.3
+        },{
+            month: "29",
+            value: 3400,
+            ratio: 87.3
+        },{
+            month: "30",
+            value: 2400,
+            ratio: 87.3
+        },{
+            month: "31",
+            value: 2400,
+            ratio: 87.3
+        },
+
+    ];
+            var xData = [],
+                yData = [];
+            var min = 50;
+            data.map(function(a, b) {
+                xData.push(a.month);
+                if (a.value === 0) {
+                    yData.push(a.value + min);
+                } else {
+                    yData.push(a.value);
+                }
+            });
+            option3 = {
+                backgroundColor:"#111c4e",
+                color: ['#3398DB'],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'line',
+                        lineStyle: {
+                            opacity: 0
+                        }
+                    },
+                    formatter: function(prams) {
+                        if (prams[0].data === min) {
+                            return "航线价格：0"
+                        } else {
+                            return "航线价格：" + prams[0].data
+                        }
+                    }
+                },
+                legend: {
+                    data: ['直接访问', '背景'],
+                    show: false
+                },
+                grid: {
+                    left: '5%',
+                    right: '1%',
+                    bottom: '5%',
+                    top: '5%',
+                    height: '85%',
+                    containLabel: true,
+                    z: 22
+                },
+                xAxis: [{
+                    type: 'category',
+                    gridIndex: 0,
+                    data: xData,
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#0c3b71'
+                        }
+                    },
+                    axisLabel: {
+                        show: true,
+                         color: 'rgb(170,170,170)',
+                         fontSize:16
+                    }
+                }],
+                yAxis: [{
+                        type: 'value',
+                        name:"单位:天",
+                        nameTextStyle:{
+                          color:"rgb(170,170,170)"
+                        },
+                        gridIndex: 0,
+                        splitLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        // min: min,
+                        // max: 100,
+                        axisLine: {
+                            lineStyle: {
+                                color: '#0c3b71'
+                            }
+                        },
+                        axisLabel: {
+                            color: 'rgb(170,170,170)',
+                            formatter: '{value}'
+                        }
+                    },
+                    {
+                        type: 'value',
+                        gridIndex: 0,
+                        min: min,
+                        max: 100,
+                        splitNumber: 12,
+                        splitLine: {
+                            show: false
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLabel: {
+                            show: false
+                        },
+                        splitArea: {
+                            show: true,
+                            areaStyle: {
+                                color: ['rgba(250,250,250,0.0)', 'rgba(250,250,250,0.05)']
+                            }
+                        }
+                    }
+                ],
+                series: [{
+                        name: '价格',
+                        type: 'bar',
+                        barWidth: '30%',
+                        xAxisIndex: 0,
+                        yAxisIndex: 0,
+                        itemStyle: {
+                            normal: {
+                                barBorderRadius: 30,
+                                color: new echarts.graphic.LinearGradient(
+                                    0, 0, 0, 1, [{
+                                            offset: 0,
+                                            color: '#00feff'
+                                        },
+                                        {
+                                            offset: 0.5,
+                                            color: '#027eff'
+                                        },
+                                        {
+                                            offset: 1,
+                                            color: '#0286ff'
+                                        }
+                                    ]
+                                )
+                            }
+                        },
+                        data: yData,
+                        zlevel: 11
+
+                    },
+                    {
+                        name: '背景',
+                        type: 'bar',
+                        barWidth: '50%',
+                        xAxisIndex: 0,
+                        yAxisIndex: 1,
+                        barGap: '-135%',
+                        data: [100, 100, 100, 100, 100, 100, 100,100, 100, 100, 100, 100, 100, 100,100, 100, 100, 100, 100, 100, 100,100, 100, 100, 100, 100, 100, 100,100,100,100],
+                        itemStyle: {
+                            normal: {
+                                color: 'rgba(255,255,255,0.1)'
+                            }
+                        },
+                        zlevel: 9
+                    },
+
+                ]
+            };
+            isMyBack.setOption(option3);
+             isMyBack.on('click', function (params) {
+                 //点击事件，点击后跳转到详情页面（json不明确，暂时未写）
+//                   alert(params.name)
+             });
+        }
+//        isMyBack()
+
+        function isMyMonthFun(monthData,myMonthMinPrice){
+                var isMyMonth = echarts.init(document.getElementById('isMyMonth'));
+	            option1 = {
+                    backgroundColor: '#080b30',
+                    title: {
+                        text: '月份最低价',
+                        textStyle: {
+                            align: 'center',
+                            color: '#fff',
+                            fontSize: 20,
+                        },
+                        top: '5%',
+                        left: 'center',
+                    },
+                    tooltip: {
+
+
+
+                        trigger: 'axis',
+                        axis:'x',
+                        show:true,
+                        axisPointer: {
+                            type: 'line',
+                            lineStyle: {
+                                color: {
+                                    type: 'linear',
+                                    x: 0,
+                                    y: 0,
+                                    x2: 0,
+                                    y2: 1,
+                                    colorStops: [{
+                                        offset: 0,
+                                        color: 'rgba(0, 255, 233,0)'
+                                    }, {
+                                        offset: 0.5,
+                                        color: 'rgba(255, 255, 255,1)',
+                                    }, {
+                                        offset: 1,
+                                        color: 'rgba(0, 255, 233,0)'
+                                    }]
+//                                    global: false
+                                }
+                            }
+                        }
+                    },
+                    grid: {
+                        top: '15%',
+                        left: '3%',
+                        right: '1%',
+                        bottom: '1%',
+                        containLabel: true
+                    },
+                    xAxis: [{
+                        type: 'category',
+                        axisLine: {
+                            show: true
+                        },
+                        splitArea: {
+                            // show: true,
+                            color: '#f00',
+                            lineStyle: {
+                                color: '#f00'
+                            },
+                        },
+                        axisLabel: {
+                            color: '#fff'
+                        },
+                        splitLine: {
+                            show: false
+                        },
+                        boundaryGap: false,
+                        data: monthData,
+
+                    }],
+
+                    yAxis: [{
+                        type: 'value',
+                        min: 0,
+                        // max: 140,
+                        splitNumber: 4,
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                color: 'rgba(255,255,255,0.1)'
+                            }
+                        },
+                        axisLine: {
+                            show: false,
+                        },
+                        axisLabel: {
+                            show: false,
+                            margin: 20,
+                            textStyle: {
+                                color: '#d1e6eb',
+
+                            },
+                        },
+                        axisTick: {
+                            show: false,
+                        },
+                    }],
+                    series: [{
+                            name: '月最低价',
+                            type: 'line',
+                            // smooth: true, //是否平滑
+                            showAllSymbol: true,
+                            // symbol: 'image://./static/images/guang-circle.png',
+                            symbol: 'circle',
+                            symbolSize: 25,
+                            lineStyle: {
+                                normal: {
+                                    color: "#6c50f3",
+                                    shadowColor: 'rgba(0, 0, 0, .3)',
+                                    shadowBlur: 0,
+                                    shadowOffsetY: 5,
+                                    shadowOffsetX: 5,
+                                },
+                            },
+                            label: {
+                                show: true,
+                                position: 'top',
+                                textStyle: {
+                                    color: '#6c50f3',
+                                }
+                            },
+                            itemStyle: {
+                                color: "#6c50f3",
+                                borderColor: "#fff",
+                                borderWidth: 3,
+                                shadowColor: 'rgba(0, 0, 0, .3)',
+                                shadowBlur: 0,
+                                shadowOffsetY: 2,
+                                shadowOffsetX: 2,
+                            },
+                            tooltip: {
+                                show: false
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                            offset: 0,
+                                            color: 'rgba(108,80,243,0.3)'
+                                        },
+                                        {
+                                            offset: 1,
+                                            color: 'rgba(108,80,243,0)'
+                                        }
+                                    ], false),
+                                    shadowColor: 'rgba(108,80,243, 0.9)',
+                                    shadowBlur: 20
+                                }
+                            },
+                            data: myMonthMinPrice
+                        }
+                ]
+             };
+	            isMyMonth.setOption(option1);
+                isMyMonth.on('click', function (params) {
+                    //获取横坐标的值，判断第几月
+                    if(params.name=="一月")
+                    {
+                        //把对应数据加入，重新渲染
+                        isMyGo(myFromData1)
+                        isMyBack(myBackData1)
+                    }if(params.name=="二月")
+                    {
+                        isMyGo(myFromData2)
+                        isMyBack(myBackData2)
+                    }
+                    if(params.name=="三月")
+                    {
+                        isMyGo(myFromData3)
+                        isMyBack(myBackData3)
+                    }
+                    if(params.name=="四月")
+                    {
+                        isMyGo(myFromData4)
+                        isMyBack(myBackData4)
+                    }
+                    if(params.name=="五月")
+                    {
+                        isMyGo(myFromData5)
+                        isMyBack(myBackData5)
+                    }
+                    if(params.name=="六月")
+                    {
+                        isMyGo(myFromData6)
+                        isMyBack(myBackData6)
+                    }
+                    if(params.name=="七月")
+                    {
+                        isMyGo(myFromData7)
+                        isMyBack(myBackData7)
+                    }
+                    if(params.name=="八月")
+                    {
+                        isMyGo(myFromData8)
+                        isMyBack(myBackData8)
+                    }
+                    if(params.name=="九月")
+                    {
+                        isMyGo(myFromData9)
+                        isMyBack(myBackData9)
+                    }
+                    if(params.name=="十月")
+                    {
+                        isMyGo(myFromData10)
+                        isMyBack(myBackData10)
+                    }
+                    if(params.name=="十一月")
+                    {
+                        isMyGo(myFromData11)
+                        isMyBack(myBackData11)
+                    }
+                    if(params.name=="十二月")
+                    {
+                        isMyGo(myFromData12)
+                        isMyBack(myBackData12)
+                    }
+
+                });
+        }
+//        isMyMonthFun()
+
+
+         function houTaiAjax(){
+            var myDataGoHouTai={
+                from:sessionStorage.getItem("f"),
+                destination:sessionStorage.getItem("t"),
+                accommodation:sessionStorage.getItem("c"),
+                isOk:sessionStorage.getItem("o"),
+                nowDate:sessionStorage.getItem("d")
+            }
+             $.ajax({
+                  type: "post",
+                  url: "http://localhost:8080/student/selectAllJudge",
+                  data: myDataGoHouTai,
+                  dataType: "json",
+                  success: function (data) {
+                      //模拟数据
+                      //发起站
+                      var myFromData = [
+                        {
+                            month: "1",
+                            value: 2500
+                        },
+
+                        {
+                            month: "2",
+                            value: 2800
+                        },
+
+                        {
+                            month: "3",
+                            value: 3000
+                        },
+
+                        {
+                            month: "4",
+                            value: 2600
+                        },
+
+                        {
+                            month: "5",
+                            value: 3500
+                        },
+
+
+                        {
+                            month: "6",
+                            value: 2500
+                        },
+                        {
+                            month: "7",
+                            value: 3200
+                        },
+                        {
+                            month: "8",
+                            value: 3100
+                        },
+                        {
+                            month: "9",
+                            value: 2900
+                        },
+                        {
+                            month: "10",
+                            value: 2500
+                        },
+                        {
+                            month: "11",
+                            value: 3600
+                        },
+                        {
+                            month: "12",
+                            value: 3400
+                        },
+                        {
+                            month: "13",
+                            value: 2800
+                        },
+                        {
+                            month: "14",
+                            value: 3000
+                        },
+                        {
+                            month: "15",
+                            value: 2400
+                        },
+                        {
+                            month: "16",
+                            value: 2400
+                        },{
+                            month: "17",
+                            value: 2400
+                        },{
+                            month: "18",
+                            value: 2400
+                        },{
+                            month: "19",
+                            value: 2400
+                        },{
+                            month: "20",
+                            value: 4000
+                        },{
+                            month: "21",
+                            value: 4100
+                        },{
+                            month: "22",
+                            value: 1200
+                        },{
+                            month: "23",
+                            value: 2300
+                        },{
+                            month: "24",
+                            value: 2900
+                        },{
+                            month: "25",
+                            value: 2000,
+                            ratio: 87.3
+                        },{
+                            month: "26",
+                            value: 2100
+                        },{
+                            month: "27",
+                            value:3100
+                        },{
+                            month: "28",
+                            value: 3600
+                        },{
+                            month: "30",
+                            value: 2400
+                        },{
+                            month: "31",
+                            value: 2400
+                        }
+                        ];
+                      //结束站
+                      var myBackData = [
+                        {
+                            month: "1",
+                            value: 2500
+                        },
+
+                        {
+                            month: "2",
+                            value: 2800
+                        },
+
+                        {
+                            month: "3",
+                            value: 3000
+                        },
+
+                        {
+                            month: "4",
+                            value: 2600
+                        },
+
+                        {
+                            month: "5",
+                            value: 3500
+                        },
+
+
+                        {
+                            month: "6",
+                            value: 2500
+                        },
+                        {
+                            month: "7",
+                            value: 3200
+                        },
+                        {
+                            month: "8",
+                            value: 3100
+                        },
+                        {
+                            month: "9",
+                            value: 2900
+                        },
+                        {
+                            month: "10",
+                            value: 2500
+                        },
+                        {
+                            month: "11",
+                            value: 3600
+                        },
+                        {
+                            month: "12",
+                            value: 3400
+                        },
+                        {
+                            month: "13",
+                            value: 2800
+                        },
+                        {
+                            month: "14",
+                            value: 3000
+                        },
+                        {
+                            month: "15",
+                            value: 2400
+                        },
+                        {
+                            month: "16",
+                            value: 2400
+                        },{
+                            month: "17",
+                            value: 2400
+                        },{
+                            month: "18",
+                            value: 2400
+                        },{
+                            month: "19",
+                            value: 2400
+                        },{
+                            month: "20",
+                            value: 4000
+                        },{
+                            month: "21",
+                            value: 4100
+                        },{
+                            month: "22",
+                            value: 1200
+                        },{
+                            month: "23",
+                            value: 2300
+                        },{
+                            month: "24",
+                            value: 2900
+                        },{
+                            month: "25",
+                            value: 2000,
+                            ratio: 87.3
+                        },{
+                            month: "26",
+                            value: 2100
+                        },{
+                            month: "27",
+                            value:3100
+                        },{
+                            month: "28",
+                            value: 3600
+                        },{
+                            month: "30",
+                            value: 2400
+                        },{
+                            month: "31",
+                            value: 2400
+                        }
+                        ];
+                      //底部月份显示
+                      var monthData=['七月', '八月', '九月', '十月', '十一月', '十二月']
+                      //每月最低价
+                      var myMonthMinPrice=[502.84, 205.97, 332.79, 281.55, 398.35, 214.02 ]
+                      //把数据加入图表中
+                      isMyMonthFun(monthData,myMonthMinPrice)
+                      isMyBack(myBackData)
+                      isMyGo(myFromData)
+                  },
+                  error: function (data) {
+                      //同上
+                      myFromData7 = [
+                        {
+                            month: "1",
+                            value: 2500
+                        },
+
+                        {
+                            month: "2",
+                            value: 2800
+                        },
+
+                        {
+                            month: "3",
+                            value: 3000
+                        },
+
+                        {
+                            month: "4",
+                            value: 2600
+                        },
+
+                        {
+                            month: "5",
+                            value: 3500
+                        },
+
+
+                        {
+                            month: "6",
+                            value: 2500
+                        },
+                        {
+                            month: "7",
+                            value: 3200
+                        },
+                        {
+                            month: "8",
+                            value: 3100
+                        },
+                        {
+                            month: "9",
+                            value: 2900
+                        },
+                        {
+                            month: "10",
+                            value: 2500
+                        },
+                        {
+                            month: "11",
+                            value: 3600
+                        },
+                        {
+                            month: "12",
+                            value: 3400
+                        },
+                        {
+                            month: "13",
+                            value: 2800
+                        },
+                        {
+                            month: "14",
+                            value: 3000
+                        },
+                        {
+                            month: "15",
+                            value: 2400
+                        },
+                        {
+                            month: "16",
+                            value: 2400
+                        },{
+                            month: "17",
+                            value: 2400
+                        },{
+                            month: "18",
+                            value: 2400
+                        },{
+                            month: "19",
+                            value: 2400
+                        },{
+                            month: "20",
+                            value: 4000
+                        },{
+                            month: "21",
+                            value: 4100
+                        },{
+                            month: "22",
+                            value: 1200
+                        },{
+                            month: "23",
+                            value: 2300
+                        },{
+                            month: "24",
+                            value: 2900
+                        },{
+                            month: "25",
+                            value: 2000,
+                            ratio: 87.3
+                        },{
+                            month: "26",
+                            value: 2100
+                        },{
+                            month: "27",
+                            value:3100
+                        },{
+                            month: "28",
+                            value: 3600
+                        },{
+                            month: "30",
+                            value: 2400
+                        },{
+                            month: "31",
+                            value: 2400
+                        }
+                        ];
+                      myFromData8 = [
+                        {
+                            month: "1",
+                            value: 25
+                        },
+
+                        {
+                            month: "2",
+                            value: 28
+                        },
+
+                        {
+                            month: "3",
+                            value: 3000
+                        },
+
+                        {
+                            month: "4",
+                            value: 2600
+                        },
+
+                        {
+                            month: "5",
+                            value: 3500
+                        },
+
+
+                        {
+                            month: "6",
+                            value: 2500
+                        },
+                        {
+                            month: "7",
+                            value: 3200
+                        },
+                        {
+                            month: "8",
+                            value: 3100
+                        },
+                        {
+                            month: "9",
+                            value: 2900
+                        },
+                        {
+                            month: "10",
+                            value: 2500
+                        },
+                        {
+                            month: "11",
+                            value: 3600
+                        },
+                        {
+                            month: "12",
+                            value: 3400
+                        },
+                        {
+                            month: "13",
+                            value: 2800
+                        },
+                        {
+                            month: "14",
+                            value: 3000
+                        },
+                        {
+                            month: "15",
+                            value: 2400
+                        },
+                        {
+                            month: "16",
+                            value: 2400
+                        },{
+                            month: "17",
+                            value: 2400
+                        },{
+                            month: "18",
+                            value: 2400
+                        },{
+                            month: "19",
+                            value: 2400
+                        },{
+                            month: "20",
+                            value: 4000
+                        },{
+                            month: "21",
+                            value: 4100
+                        },{
+                            month: "22",
+                            value: 1200
+                        },{
+                            month: "23",
+                            value: 2300
+                        },{
+                            month: "24",
+                            value: 2900
+                        },{
+                            month: "25",
+                            value: 2000,
+                            ratio: 87.3
+                        },{
+                            month: "26",
+                            value: 2100
+                        },{
+                            month: "27",
+                            value:3100
+                        },{
+                            month: "28",
+                            value: 3600
+                        },{
+                            month: "30",
+                            value: 2400
+                        },{
+                            month: "31",
+                            value: 2400
+                        }
+                        ];
+                      myBackData7 = [
+                        {
+                            month: "1",
+                            value: 2500
+                        },
+
+                        {
+                            month: "2",
+                            value: 2800
+                        },
+
+                        {
+                            month: "3",
+                            value: 3000
+                        },
+
+                        {
+                            month: "4",
+                            value: 2600
+                        },
+
+                        {
+                            month: "5",
+                            value: 3500
+                        },
+
+
+                        {
+                            month: "6",
+                            value: 2500
+                        },
+                        {
+                            month: "7",
+                            value: 3200
+                        },
+                        {
+                            month: "8",
+                            value: 3100
+                        },
+                        {
+                            month: "9",
+                            value: 2900
+                        },
+                        {
+                            month: "10",
+                            value: 2500
+                        },
+                        {
+                            month: "11",
+                            value: 3600
+                        },
+                        {
+                            month: "12",
+                            value: 3400
+                        },
+                        {
+                            month: "13",
+                            value: 2800
+                        },
+                        {
+                            month: "14",
+                            value: 3000
+                        },
+                        {
+                            month: "15",
+                            value: 2400
+                        },
+                        {
+                            month: "16",
+                            value: 2400
+                        },{
+                            month: "17",
+                            value: 2400
+                        },{
+                            month: "18",
+                            value: 2400
+                        },{
+                            month: "19",
+                            value: 2400
+                        },{
+                            month: "20",
+                            value: 4000
+                        },{
+                            month: "21",
+                            value: 4100
+                        },{
+                            month: "22",
+                            value: 1200
+                        },{
+                            month: "23",
+                            value: 2300
+                        },{
+                            month: "24",
+                            value: 2900
+                        },{
+                            month: "25",
+                            value: 2000,
+                            ratio: 87.3
+                        },{
+                            month: "26",
+                            value: 2100
+                        },{
+                            month: "27",
+                            value:3100
+                        },{
+                            month: "28",
+                            value: 3600
+                        },{
+                            month: "30",
+                            value: 2400
+                        },{
+                            month: "31",
+                            value: 2400
+                        }
+                        ];
+                     monthData=['七月', '八月', '九月', '十月', '十一月', '十二月']
+                     myMonthMinPrice=[502.84, 205.97, 332.79, 281.55, 398.35, 214.02 ]
+                      isMyMonthFun(monthData,myMonthMinPrice)
+                      isMyBack(myBackData7)
+                      isMyGo(myFromData7)
+                  }
+              })
+        }
+    })
+
+</script>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>全国低价图</title>
+    <link rel="stylesheet" href="css/index.css" />
+    <script src="js/jquery.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <script src="jq3.4.1/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <!-- 头部 -->
+    <header>
+      <h1>全国低价图</h1>
+      <div class="show-time"></div>
+      <script>
+        var t = null;
+        t = setTimeout(time, 1000); //开始运行
+        function time() {
+          clearTimeout(t); //清除定时器
+          dt = new Date();
+          var y = dt.getFullYear();
+          var mt = dt.getMonth() + 1;
+          var day = dt.getDate();
+          var h = dt.getHours(); //获取时
+          var m = dt.getMinutes(); //获取分
+          var s = dt.getSeconds(); //获取秒
+          document.querySelector(".show-time").innerHTML =
+            "当前时间：" +
+            y +
+            "年" +
+            mt +
+            "月" +
+            day +
+            "日-" +
+            h +
+            "时" +
+            m +
+            "分" +
+            s +
+            "秒";
+          t = setTimeout(time, 1000); //设定定时器，循环运行
+        }
+      </script>
+    </header>
+
+    <!-- 页面主体 -->
+    <section class="mainbox">
+      <!-- 左侧盒子 -->
+
+      <!-- 中间盒子 -->
+      <div class="column">
+        <!-- 头部 no模块 -->
+        <div class="no">
+          <!--<div class="no-hd">-->
+            <!--<ul>-->
+              <!--<li>12434</li>-->
+              <!--<li>10983</li>-->
+            <!--</ul>-->
+          <!--</div>-->
+          <div class="no-bd">
+    <form class="form-inline" action="index.html">
+  <div class="form-group" style="width: 17%">
+    <select class="form-control" style="width: 100%" name="from">
+        <option value="北京">出发地:北京</option>
+    </select>
+  </div>
+  <div class="form-group" style="width: 17%">
+    <select class="form-control" style="width: 100%" name="zhi">
+        <option value="直飞">直飞</option>
+        <option value="转乘">转乘</option>
+    </select>
+  </div>
+  <div class="form-group" style="width: 17%">
+      <input type="date" name="time" style="height: 35px;width: 100%">
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" name="isMian" style="" value="true"><span style="color: white">免签或落地签</span>
+    </label>
+  </div>
+  <div class="form-group" style="width: 17%;margin-top: 2%;margin-left: 3%">
+    <div class="progress">
+        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 30%">
+          <span class="sr-only">40%</span><span id="m1">300</span>/<span id="m2">30000</span>
+        </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-success" style="">搜索</button>
+            <a href="index.html" style="color: white;margin-left: 8%">index</a>
+			<a href="one.html" style="color: white">one</a>
+</form>
+          </div>
+        </div>
+        <!-- map模块 -->
+        <div class="map">
+          <div class="map1"></div>
+          <div class="map2"></div>
+          <div class="map3"></div>
+          <div class="chart" style="margin-right: 300px"></div>
+        </div>
+      </div>
+    </section>
+
+    <script src="js/flexible.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <!-- 引入china.js 完成地图模块 -->
+    <script src="js/china.js"></script>
+    <script src="js/index.js"></script>
+  </body>
+</html>

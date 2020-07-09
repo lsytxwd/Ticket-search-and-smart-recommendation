@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="jq3.4.1/jquery-1.12.4.min.js"></script>
+</head>
+<body>
+<script type = "text/javascript" >
+
+    var myDataGoHouTai={
+        begin:2020-07-06,
+        end:2020-07-06
+    }
+
+    $.ajax({
+      type: "get",
+        data: myDataGoHouTai,
+      dataType: "json",
+      url: "http://localhost:8080/searchMinPriceByMonth",
+      success: function (result) {
+
+      }
+    });
+</script>
+</body>
+</html>

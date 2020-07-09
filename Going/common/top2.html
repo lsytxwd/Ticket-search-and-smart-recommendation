@@ -1,0 +1,137 @@
+<meta charset="UTF-8" />
+<script>
+	function hide_left_menu() {
+		$("#left_menu").toggle();
+		//判断display  是啥  display: none;  display: block;
+		var display_ = $("#left_menu").css("display");
+		if (display_ == 'none') {
+			$("#main_scroll").css("padding-left", "0px");
+			left_width = 0 ;
+		} else {
+			$("#main_scroll").css("padding-left", "200px");
+			left_width =200;
+		}
+		init_tab_height();
+	}
+</script>
+
+<style>
+/* 顶部 导航整块的间距取消   默认20 */
+.layui-nav{
+	padding: 0 0px;
+}
+/* 顶部 导航 菜单 之间 间距15  默认20 */
+.layui-nav .layui-nav-item a {
+    padding: 0 15px;
+}
+</style>
+
+<div style="height: 60px; width: 100%; background-color: #23262E; display: flex; display: -webkit-flex;">
+	<div style="width: 100px; text-align: center; vertical-align: middle; overflow: hidden;background-color: black">
+			<i class="layui-icon layui-icon-camera layui-anim layui-anim-scaleSpring" style="font-size: 60px; color: #ffffff"></i>
+	</div>
+
+
+	<div style="flex: 1; -webkit-flex: 1;">
+		<form class="layui-form" action="two.html" lay-filter="example" style="padding-top: 10px">
+  			<div class="layui-form-item" style="padding-left: 100px">
+				  <div class="layui-input-inline" style="width: 240px" >
+											<select name="quiz1" id="al1">
+						 <option value="北京">出发地</option>
+					  </select>
+				  </div>
+				<div class="layui-input-inline" style="width: 40px">
+				   <i class="layui-icon layui-icon-senior layui-anim layui-anim-scaleSpring" style="font-size: 40px; color: #ffffff" id="ec"></i>
+				</div>
+				<div class="layui-input-inline" style="width: 240px">
+				   	<select name="quiz2" id="al2">
+						 <option value="上海">目的地</option>
+					  </select>
+				</div>
+					<div class="layui-input-inline" style="width: 150px">
+					  <select name="quiz3" id="quiz3">
+						<option value="经济仓">经济仓</option>
+						<option value="商务舱">商务舱</option>
+					  </select>
+					</div>
+					<div class="layui-input-inline" style="width: 150px">
+					  <select name="quiz4" id="quiz4">
+						<option value="直飞">直飞</option>
+						<option value="转乘">转乘</option>
+					  </select>
+					</div>
+					  <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1" id="MySub">搜索</button>
+							<a href="index.html" style="color: white">index</a>
+			<a href="one.html" style="color: white">one</a>
+	 		 </div>
+		</form>
+
+
+	</div>
+
+	<script>
+		    layui.use(['layer','table'],function(){
+        $ = layui.jquery;
+        layer = layui.layer;
+    })
+	</script>
+
+	<script>
+		var a=document.querySelector("#ec");
+		a.onclick=function(){
+			var b=document.querySelector("#quiz1").value;
+			var c=document.querySelector("#quiz2").value;
+			document.querySelector("#quiz1").value=c;
+			document.querySelector("#quiz2").value=b;
+		}
+	</script>
+	<script>
+		$("#MySub").click(function(){
+			var f=$("#quiz1").val();
+			sessionStorage.setItem("f",f)
+			var t=$("#quiz2").val();
+			sessionStorage.setItem("t",t)
+			var c=$("#quiz3").val();
+			sessionStorage.setItem("c",c)
+			var o=$("#quiz4").val();
+			sessionStorage.setItem("o",o)
+			var d=new Date();
+			sessionStorage.setItem("d", d.getMonth()+1)
+		})
+
+				$(function(){
+			   $.ajax({
+				  type: "POST",
+				  dataType: "json",
+				  url: "json/a.json",
+				  success: function (result) {
+					  var showNameArr=[];
+					  var isNumArr=[];
+					  var isNameArr=[]
+					  for(i in result)
+						{
+							var showName="("+result[i]+")"+i;
+							var isNum=result[i];
+							showNameArr.push(showName);
+							isNumArr.push(isNum);
+							isNameArr.push(i)
+//							var a12=$("#al1")
+//							var value=
+//						   	console.log(i+"值"+result[i])
+//							a12.append("<option value='"+i+"'>("+result[i]+")"+i+"</option>")
+						}
+					  var al1=$("#al1")
+					  var al2=$("#al2")
+					  showNameArr.sort();
+					  isNumArr.sort();
+					  for(var i=0;i<showNameArr.length;i++)
+					  {
+						  al1.append("<option value='"+isNameArr[i]+"'>"+showNameArr[i]+"</option>")
+						  al2.append("<option value='"+isNameArr[i]+"'>"+showNameArr[i]+"</option>")
+					  }
+				  }
+				});
+		})
+	</script>
+</div>
+
